@@ -10,24 +10,41 @@ h1 {
   color: #006064;
 }
 
+#road-container {
+  position: relative;
+  padding-top: 50px;
+}
+
+#car {
+  font-size: 32px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: left 1s ease;
+}
+
 #roadmap {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  margin-top: 30px;
+  margin-top: 50px;
+  position: relative;
+  padding: 20px;
+  border-top: 6px solid #4dd0e1;
+  height: 150px;
 }
 
 .step {
   background: #ffffff;
   border: 3px dashed #4dd0e1;
   border-radius: 15px;
-  padding: 20px;
-  width: 80%;
-  max-width: 500px;
-  transition: transform 0.2s ease-in-out;
+  padding: 10px;
+  width: 22%;
+  min-width: 200px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
   position: relative;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
 }
 
 .step.locked {
@@ -35,30 +52,27 @@ h1 {
   pointer-events: none;
 }
 
-.step:hover {
-  transform: scale(1.02);
-}
-
 .step h2 {
-  margin-top: 0;
+  font-size: 1rem;
+  margin-bottom: 10px;
   color: #00796b;
 }
 
 .task {
-  margin: 10px 0;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .task input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .task a {
   color: #0288d1;
   text-decoration: none;
+  font-size: 0.9rem;
 }
 
 .task a:hover {
