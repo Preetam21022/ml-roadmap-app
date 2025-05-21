@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Car Progress Animation</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>ML Roadmap App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAAwGXj2Zaftf10DTYHt3T_UfxnZtViL98",
+      authDomain: "ml-roadmap-806ef.firebaseapp.com",
+      projectId: "ml-roadmap-806ef",
+      storageBucket: "ml-roadmap-806ef.firebasestorage.app",
+      messagingSenderId: "538710745439",
+      appId: "1:538710745439:web:f8337d1c01fffc687056ea",
+      measurementId: "G-74YGNVMSWD"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </head>
 <body>
-
-  <h2>Complete Steps to Move the Car</h2>
-  <div id="track">
-    <img id="car" src="https://i.imgur.com/O6zA7g6.png" alt="Car" />
+  <h1>ML Roadmap</h1>
+  <p>Complete tasks to unlock each step on your machine learning journey!</p>
+  <div id="road-container">
+    <div id="car">🚗</div>
+    <div id="roadmap"></div>
   </div>
-
-  <div id="buttons">
-    <button onclick="moveCar(1)">Step 1</button>
-    <button onclick="moveCar(2)">Step 2</button>
-    <button onclick="moveCar(3)">Step 3</button>
-    <button onclick="moveCar(4)">Step 4</button>
-  </div>
-
-  <script src="script.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
