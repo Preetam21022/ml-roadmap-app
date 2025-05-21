@@ -1,4 +1,5 @@
 const roadmap = document.getElementById("roadmap");
+const car = document.getElementById("car");
 
 const steps = [
   {
@@ -35,6 +36,8 @@ const steps = [
   },
 ];
 
+let lastUnlockedStep = 0;
+
 steps.forEach((step, index) => {
   const stepEl = document.createElement("div");
   stepEl.className = "step";
@@ -56,7 +59,7 @@ steps.forEach((step, index) => {
     checkbox.addEventListener("change", () => {
       taskStates[taskIndex] = checkbox.checked;
       localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-      location.reload(); // refresh to check if step unlocks
+      location.reload();
     });
 
     const link = document.createElement("a");
@@ -69,13 +72,24 @@ steps.forEach((step, index) => {
     stepEl.appendChild(taskEl);
   });
 
-  // Lock step if previous is incomplete
   const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
     const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
     return prev.every(Boolean);
   });
 
   if (!isUnlocked) stepEl.classList.add("locked");
+  else lastUnlockedStep = index;
 
   roadmap.appendChild(stepEl);
 });
+
+// Move car to unlocked step
+function moveCarToStep(index) {
+  const roadmapWidth = roadmap.offsetWidth;
+  const stepWidth = roadmap.children[0].offsetWidth;
+  const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
+  const carPosition = index * (stepWidth + spacing);
+  car.style.left = `${carPosition}px`;
+}
+
+moveCarToStep(lastUnlockedStep);
