@@ -29,15 +29,12 @@ document.getElementById("emailLoginBtn").onclick = () => {
 };
 
 document.getElementById("logoutBtn").onclick = () => {
-  signOut(auth).catch(console.error);
+  signOut(auth);
 };
 
 onAuthStateChanged(auth, async (user) => {
-  const authSection = document.getElementById("auth-section");
-  const roadContainer = document.getElementById("road-container");
-  const logoutBtn = document.getElementById("logoutBtn");
-
   if (user) {
+    // Save user to DB
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
@@ -46,17 +43,19 @@ onAuthStateChanged(auth, async (user) => {
     }, { merge: true });
 
     document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
-    authSection.style.display = "none";
-    roadContainer.style.display = "block";
-    logoutBtn.style.display = "inline-block";
+    document.getElementById("auth-section").style.display = "none";
+    document.getElementById("road-container").style.display = "block";
+    document.getElementById("logoutBtn").style.display = "block";
+
   } else {
     document.getElementById("auth-status").textContent = "Not logged in";
-    authSection.style.display = "block";
-    roadContainer.style.display = "none";
-    logoutBtn.style.display = "none";
+    document.getElementById("auth-section").style.display = "block";
+    document.getElementById("road-container").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "none";
   }
 });
 
+// ============ Roadmap Setup ============
 const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
 
@@ -66,7 +65,7 @@ const steps = [
     tasks: [
       { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
       { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
-      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
+      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" }
     ]
   },
   {
@@ -74,7 +73,7 @@ const steps = [
     tasks: [
       { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
       { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
-      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
+      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" }
     ]
   },
   {
@@ -82,7 +81,7 @@ const steps = [
     tasks: [
       { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
       { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
-      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
+      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" }
     ]
   },
   {
@@ -90,9 +89,9 @@ const steps = [
     tasks: [
       { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
       { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
-      { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
+      { text: "Kaggle Projects", link: "https://www.kaggle.com/" }
     ]
-  },
+  }
 ];
 
 let lastUnlockedStep = 0;
