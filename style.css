@@ -1,8 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to bottom, #e0f7fa, #fff);
-  margin: 0;
-  padding: 0;
+  padding: 20px;
   color: #333;
 }
 
@@ -11,48 +10,40 @@ h1 {
   color: #006064;
 }
 
-#auth-section, #road-container {
-  padding: 20px;
+#auth-section, #main-content {
+  text-align: center;
 }
 
-button {
-  background-color: #4dd0e1;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  margin: 5px;
-  font-size: 1rem;
-  transition: background-color 0.3s ease;
-}
-
-button:hover {
-  background-color: #0097a7;
-}
-
-input[type="email"], input[type="password"] {
+#auth-section input, button {
+  display: block;
+  margin: 10px auto;
   padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  margin: 5px;
   font-size: 1rem;
-  width: 200px;
+}
+
+#logoutBtn, #resetBtn {
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #4dd0e1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
 }
 
 #road-container {
   position: relative;
   padding-top: 50px;
-  display: none;
 }
 
 #car {
   font-size: 32px;
   position: absolute;
-  top: -40px;
+  top: 0;
   left: 0;
   transition: left 1s ease;
-  transform: scaleX(1); /* faces right */
+  transform: scaleX(1); /* Car faces right */
 }
 
 #roadmap {
@@ -60,10 +51,10 @@ input[type="email"], input[type="password"] {
   justify-content: space-between;
   align-items: center;
   margin-top: 50px;
+  position: relative;
   padding: 20px;
-  border-top: 10px solid #000; /* pitch black road */
+  border-top: 6px solid #000; /* Pitch black road */
   height: 150px;
-  background-color: #111;
 }
 
 .step {
@@ -74,24 +65,13 @@ input[type="email"], input[type="password"] {
   width: 22%;
   min-width: 200px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
   text-align: center;
   transition: transform 0.2s ease-in-out;
-}
-
-.step:hover {
-  transform: scale(1.03);
 }
 
 .step.locked {
   opacity: 0.4;
   pointer-events: none;
-}
-
-.step h2 {
-  font-size: 1rem;
-  margin-bottom: 10px;
-  color: #00796b;
 }
 
 .task {
@@ -113,4 +93,12 @@ input[type="email"], input[type="password"] {
 
 .task a:hover {
   text-decoration: underline;
+}
+
+#loading {
+  display: none;
+  font-size: 1.5rem;
+  color: #006064;
+  text-align: center;
+  margin-top: 50px;
 }
