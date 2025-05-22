@@ -16,7 +16,7 @@
       storageBucket: "ml-roadmap-806ef.firebasestorage.app",
       messagingSenderId: "538710745439",
       appId: "1:538710745439:web:f8337d1c01fffc687056ea",
-      measurementId: "G-74YGNVMSWD"
+      measurementId: "G-74YGNVMSWD",
     };
 
     const app = initializeApp(firebaseConfig);
@@ -27,7 +27,9 @@
   <h1>ML Roadmap</h1>
   <p>Complete tasks to unlock each step on your machine learning journey!</p>
 
-  <div id="auth-section">
+  <div id="loading" style="text-align:center; font-size:1.2rem; color:#00bcd4;">Loading...</div>
+
+  <div id="auth-section" style="display:none;">
     <h2>Login</h2>
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
@@ -37,13 +39,12 @@
   </div>
 
   <div id="main-content" style="display:none;">
-    <button id="logoutBtn" class="btn">Logout</button>
-    <button id="resetBtn" class="btn">Reset Progress</button>
-
     <div id="road-container">
       <div id="car">🚗</div>
       <div id="roadmap"></div>
     </div>
+    <button id="resetBtn" style="margin-top:20px;">Reset Progress</button>
+    <button id="logoutBtn" style="margin-left: 10px;">Logout</button>
   </div>
 
   <script type="module" src="main.js"></script>
