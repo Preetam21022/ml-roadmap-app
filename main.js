@@ -1,3 +1,39 @@
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+
+const auth = getAuth();
+const db = getFirestore();
+const provider = new GoogleAuthProvider();
+
+document.getElementById("googleLoginBtn").onclick = () => {
+  signInWithPopup(auth, provider).catch(console.error);
+};
+
+document.getElementById("emailLoginBtn").onclick = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  signInWithEmailAndPassword(auth, email, password).catch(console.error);
+};
+
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      createdAt: serverTimestamp()
+    }, { merge: true });
+
+    document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
+    document.getElementById("auth-section").style.display = "none";
+    document.getElementById("road-container").style.display = "block";
+  } else {
+    document.getElementById("auth-status").textContent = "Not logged in";
+    document.getElementById("auth-section").style.display = "block";
+    document.getElementById("road-container").style.display = "none";
+  }
+});
+
 const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
 
