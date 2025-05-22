@@ -1,4 +1,3 @@
-
 import {
   getAuth,
   signInWithPopup,
@@ -42,10 +41,12 @@ logoutBtn.onclick = () => {
 };
 
 resetBtn.onclick = () => {
-  for (let i = 0; i < 4; i++) {
-    localStorage.removeItem(`step_${i}`);
+  if (confirm("Are you sure you want to reset all progress?")) {
+    for (let i = 0; i < 4; i++) {
+      localStorage.removeItem(`step_${i}`);
+    }
+    location.reload();
   }
-  location.reload();
 };
 
 const steps = [
@@ -106,6 +107,10 @@ function renderRoadmap() {
 
     const taskStates = JSON.parse(localStorage.getItem(`step_${index}`)) || Array(step.tasks.length).fill(false);
 
+    if (taskStates.every(Boolean)) {
+      stepEl.classList.add("completed");
+    }
+
     step.tasks.forEach((task, taskIndex) => {
       const taskEl = document.createElement("div");
       taskEl.className = "task";
@@ -117,7 +122,7 @@ function renderRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        renderRoadmap(); // Re-render everything and update car
+        renderRoadmap();
       });
 
       const link = document.createElement("a");
@@ -142,9 +147,12 @@ function renderRoadmap() {
   });
 
   moveCarToStep(lastUnlockedStep);
+
+  document.getElementById("progress-indicator").innerText = `Step ${lastUnlockedStep + 1} of ${steps.length}`;
 }
 
 onAuthStateChanged(auth, async (user) => {
+  document.getElementById("loadingMessage").style.display = "none";
   if (user) {
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
