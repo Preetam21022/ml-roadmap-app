@@ -95,7 +95,9 @@ function moveCarToStep(index) {
 
 function renderRoadmap() {
   roadmap.innerHTML = "";
+
   let lastUnlockedStep = 0;
+  let lastCompletedStep = -1; // -1 means no step completed
 
   steps.forEach((step, index) => {
     const stepEl = document.createElement("div");
@@ -107,8 +109,10 @@ function renderRoadmap() {
 
     const taskStates = JSON.parse(localStorage.getItem(`step_${index}`)) || Array(step.tasks.length).fill(false);
 
-    if (taskStates.every(Boolean)) {
-      stepEl.classList.add("completed");
+    // Check if this step is fully completed
+    const isStepCompleted = taskStates.length > 0 && taskStates.every(Boolean);
+    if (isStepCompleted && index > lastCompletedStep) {
+      lastCompletedStep = index;
     }
 
     step.tasks.forEach((task, taskIndex) => {
@@ -122,7 +126,7 @@ function renderRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        renderRoadmap();
+        renderRoadmap(); // Re-render roadmap + move car again
       });
 
       const link = document.createElement("a");
@@ -135,6 +139,7 @@ function renderRoadmap() {
       stepEl.appendChild(taskEl);
     });
 
+    // Step is unlocked if it's the first, or all previous steps are completed fully
     const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
       const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
       return prev.every(Boolean);
@@ -146,7 +151,11 @@ function renderRoadmap() {
     roadmap.appendChild(stepEl);
   });
 
-  moveCarToStep(lastUnlockedStep);
+  // If no step completed, move car to step 0, else last completed step
+  const carTargetStep = lastCompletedStep === -1 ? 0 : lastCompletedStep;
+  moveCarToStep(carTargetStep);
+}
+
 
   document.getElementById("progress-indicator").innerText = `Step ${lastUnlockedStep + 1} of ${steps.length}`;
 }
