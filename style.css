@@ -29,6 +29,15 @@ h1 {
   transition: left 1s ease;
 }
 
+#car-left {
+  font-size: 48px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%) scaleX(-1); /* flipped horizontally */
+  transition: left 1s ease;
+}
+
 #roadmap {
   display: flex;
   justify-content: space-between;
