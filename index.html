@@ -20,11 +20,12 @@
     };
 
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    getAnalytics(app);
   </script>
 </head>
 <body>
-  <div id="loading">Loading...</div>
+  <h1>ML Roadmap</h1>
+  <p>Complete tasks to unlock each step on your machine learning journey!</p>
 
   <div id="auth-section">
     <h2>Login</h2>
@@ -32,19 +33,13 @@
     <input type="password" id="password" placeholder="Password" />
     <button id="emailLoginBtn">Login with Email</button>
     <button id="googleLoginBtn">Login with Google</button>
-    <p id="auth-status"></p>
   </div>
 
-  <div id="main-content">
-    <h1>ML Roadmap</h1>
-    <p>Complete tasks to unlock each step on your machine learning journey!</p>
-    <button id="logoutBtn">Logout</button>
-    <button id="resetBtn">Reset Progress</button>
-
-    <div id="road-container">
-      <div id="car">🚗</div>
-      <div id="roadmap"></div>
-    </div>
+  <div id="road-container" style="display: none;">
+    <div id="car">🚗</div>
+    <div id="roadmap"></div>
+    <button id="resetProgressBtn" style="display: none;">Reset Progress</button>
+    <button id="logoutBtn" style="display: none;">Logout</button>
   </div>
 
   <script type="module" src="main.js"></script>
