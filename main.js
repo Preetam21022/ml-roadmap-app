@@ -30,6 +30,7 @@ const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
 
 emailLoginBtn.onclick = () => {
+  console.log("Email login clicked");
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -39,6 +40,9 @@ emailLoginBtn.onclick = () => {
   }
 
   signInWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      console.log("Email login successful", userCredential.user);
+    })
     .catch(error => {
       alert("Login failed: " + error.message);
       console.error("Login error:", error);
@@ -46,6 +50,7 @@ emailLoginBtn.onclick = () => {
 };
 
 signupBtn.onclick = () => {
+  console.log("Signup clicked");
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -55,7 +60,8 @@ signupBtn.onclick = () => {
   }
 
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
+    .then(userCredential => {
+      console.log("Signup successful", userCredential.user);
       alert("Account created successfully. You are now logged in.");
     })
     .catch(error => {
@@ -63,6 +69,7 @@ signupBtn.onclick = () => {
       console.error("Signup error:", error);
     });
 };
+
 
 googleLoginBtn.onclick = () => {
   signInWithPopup(auth, provider)
