@@ -1,3 +1,4 @@
+
 import {
   getAuth,
   signInWithPopup,
@@ -24,11 +25,28 @@ const resetBtn = document.getElementById("resetProgressBtn");
 const authSection = document.getElementById("auth-section");
 const roadContainer = document.getElementById("road-container");
 const roadmap = document.getElementById("roadmap");
-const carRight = document.getElementById("car");
-const carLeft = document.createElement("div");
-carLeft.id = "car-left";
-carLeft.textContent = "🚗";
-roadContainer.appendChild(carLeft);
+const car = document.getElementById("car");
+
+emailLoginBtn.onclick = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  signInWithEmailAndPassword(auth, email, password).catch(console.error);
+};
+
+googleLoginBtn.onclick = () => {
+  signInWithPopup(auth, provider).catch(console.error);
+};
+
+logoutBtn.onclick = () => {
+  signOut(auth);
+};
+
+resetBtn.onclick = () => {
+  for (let i = 0; i < 4; i++) {
+    localStorage.removeItem(`step_${i}`);
+  }
+  location.reload();
+};
 
 const steps = [
   {
@@ -65,23 +83,13 @@ const steps = [
   }
 ];
 
-let lastRenderedStep = 0;
-
 function moveCarToStep(index) {
   const roadmapWidth = roadmap.offsetWidth;
   const stepWidth = roadmap.children[0].offsetWidth;
   const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
   const carPosition = index * (stepWidth + spacing);
-
-  const movingForward = index >= lastRenderedStep;
-
-  carRight.style.display = movingForward ? "block" : "none";
-  carLeft.style.display = movingForward ? "none" : "block";
-
-  const carEl = movingForward ? carRight : carLeft;
-  carEl.style.left = `${carPosition}px`;
-
-  lastRenderedStep = index;
+  car.style.left = `${carPosition}px`;
+  car.style.transform = "scaleX(1)";
 }
 
 function renderRoadmap() {
@@ -109,7 +117,7 @@ function renderRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        renderRoadmap();
+        renderRoadmap(); // Re-render everything and update car
       });
 
       const link = document.createElement("a");
@@ -136,19 +144,25 @@ function renderRoadmap() {
   moveCarToStep(lastUnlockedStep);
 }
 
-emailLoginBtn.onclick = () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  signInWithEmailAndPassword(auth, email, password).catch(console.error);
-};
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      createdAt: serverTimestamp()
+    }, { merge: true });
 
-googleLoginBtn.onclick = () => {
-  signInWithPopup(auth, provider).catch(console.error);
-};
+    authSection.style.display = "none";
+    roadContainer.style.display = "block";
+    logoutBtn.style.display = "inline-block";
+    resetBtn.style.display = "inline-block";
 
-logoutBtn.onclick = () => {
-  signOut(auth);
-};
-
-resetBtn.onclick = () => {
-  for (let i = 0; i < 4; i++) {
+    renderRoadmap();
+  } else {
+    authSection.style.display = "block";
+    roadContainer.style.display = "none";
+    logoutBtn.style.display = "none";
+    resetBtn.style.display = "none";
+  }
+});
