@@ -20,8 +20,8 @@ const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
 const emailLoginBtn = document.getElementById("emailLoginBtn");
+const signupBtn = document.getElementById("signupBtn");
 const googleLoginBtn = document.getElementById("googleLoginBtn");
-const signupBtn = document.getElementById("signupBtn"); // ⬅️ Add this in your HTML
 const logoutBtn = document.getElementById("logoutBtn");
 const resetBtn = document.getElementById("resetProgressBtn");
 const authSection = document.getElementById("auth-section");
