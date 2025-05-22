@@ -1,22 +1,20 @@
-import {
-  getAuth,
-  signInWithPopup,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
 const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
+
+const authSection = document.getElementById("auth-section");
+const mainContent = document.getElementById("main-content");
+const logoutBtn = document.getElementById("logoutBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+logoutBtn.onclick = () => signOut(auth);
+resetBtn.onclick = () => {
+  steps.forEach((_, i) => localStorage.removeItem(`step_${i}`));
+  updateRoadmap();
+};
 
 document.getElementById("googleLoginBtn").onclick = () => {
   signInWithPopup(auth, provider).catch(console.error);
@@ -28,13 +26,8 @@ document.getElementById("emailLoginBtn").onclick = () => {
   signInWithEmailAndPassword(auth, email, password).catch(console.error);
 };
 
-document.getElementById("logoutBtn").onclick = () => {
-  signOut(auth);
-};
-
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    // Save user to DB
     await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
       email: user.email,
@@ -42,20 +35,15 @@ onAuthStateChanged(auth, async (user) => {
       createdAt: serverTimestamp()
     }, { merge: true });
 
-    document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
-    document.getElementById("auth-section").style.display = "none";
-    document.getElementById("road-container").style.display = "block";
-    document.getElementById("logoutBtn").style.display = "block";
-
+    authSection.style.display = "none";
+    mainContent.style.display = "block";
+    updateRoadmap();
   } else {
-    document.getElementById("auth-status").textContent = "Not logged in";
-    document.getElementById("auth-section").style.display = "block";
-    document.getElementById("road-container").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "none";
+    authSection.style.display = "block";
+    mainContent.style.display = "none";
   }
 });
 
-// ============ Roadmap Setup ============
 const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
 
@@ -65,7 +53,7 @@ const steps = [
     tasks: [
       { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
       { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
-      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" }
+      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
     ]
   },
   {
@@ -73,7 +61,7 @@ const steps = [
     tasks: [
       { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
       { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
-      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" }
+      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
     ]
   },
   {
@@ -81,7 +69,7 @@ const steps = [
     tasks: [
       { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
       { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
-      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" }
+      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
     ]
   },
   {
@@ -89,64 +77,68 @@ const steps = [
     tasks: [
       { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
       { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
-      { text: "Kaggle Projects", link: "https://www.kaggle.com/" }
+      { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
     ]
-  }
+  },
 ];
 
-let lastUnlockedStep = 0;
+function updateRoadmap() {
+  roadmap.innerHTML = "";
+  let lastUnlockedStep = 0;
 
-steps.forEach((step, index) => {
-  const stepEl = document.createElement("div");
-  stepEl.className = "step";
+  steps.forEach((step, index) => {
+    const stepEl = document.createElement("div");
+    stepEl.className = "step";
 
-  const header = document.createElement("h2");
-  header.innerText = step.title;
-  stepEl.appendChild(header);
+    const header = document.createElement("h2");
+    header.innerText = step.title;
+    stepEl.appendChild(header);
 
-  const taskStates = JSON.parse(localStorage.getItem(`step_${index}`)) || Array(step.tasks.length).fill(false);
+    const taskStates = JSON.parse(localStorage.getItem(`step_${index}`)) || Array(step.tasks.length).fill(false);
 
-  step.tasks.forEach((task, taskIndex) => {
-    const taskEl = document.createElement("div");
-    taskEl.className = "task";
+    step.tasks.forEach((task, taskIndex) => {
+      const taskEl = document.createElement("div");
+      taskEl.className = "task";
 
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = taskStates[taskIndex];
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = taskStates[taskIndex];
 
-    checkbox.addEventListener("change", () => {
-      taskStates[taskIndex] = checkbox.checked;
-      localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-      location.reload();
+      checkbox.addEventListener("change", () => {
+        taskStates[taskIndex] = checkbox.checked;
+        localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
+        updateRoadmap();
+      });
+
+      const link = document.createElement("a");
+      link.href = task.link;
+      link.target = "_blank";
+      link.textContent = task.text;
+
+      taskEl.appendChild(checkbox);
+      taskEl.appendChild(link);
+      stepEl.appendChild(taskEl);
     });
 
-    const link = document.createElement("a");
-    link.href = task.link;
-    link.target = "_blank";
-    link.textContent = task.text;
+    const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
+      const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
+      return prev.every(Boolean);
+    });
 
-    taskEl.appendChild(checkbox);
-    taskEl.appendChild(link);
-    stepEl.appendChild(taskEl);
+    if (!isUnlocked) stepEl.classList.add("locked");
+    else lastUnlockedStep = index;
+
+    roadmap.appendChild(stepEl);
   });
 
-  const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
-    const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
-    return prev.every(Boolean);
-  });
-
-  if (!isUnlocked) stepEl.classList.add("locked");
-  else lastUnlockedStep = index;
-
-  roadmap.appendChild(stepEl);
-});
+  moveCarToStep(lastUnlockedStep);
+}
 
 function moveCarToStep(index) {
   const roadmapWidth = roadmap.offsetWidth;
-  const stepWidth = roadmap.children[0].offsetWidth;
+  const stepWidth = roadmap.children[0]?.offsetWidth || 200;
   const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
   const carPosition = index * (stepWidth + spacing);
   car.style.left = `${carPosition}px`;
 }
 
-moveCarToStep(lastUnlockedStep);
