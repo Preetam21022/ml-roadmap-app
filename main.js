@@ -1,20 +1,29 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp,
+} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
 const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
+const loadingDiv = document.getElementById("loading");
 const authSection = document.getElementById("auth-section");
 const mainContent = document.getElementById("main-content");
 const logoutBtn = document.getElementById("logoutBtn");
 const resetBtn = document.getElementById("resetBtn");
-
-logoutBtn.onclick = () => signOut(auth);
-resetBtn.onclick = () => {
-  steps.forEach((_, i) => localStorage.removeItem(`step_${i}`));
-  updateRoadmap();
-};
+const roadmap = document.getElementById("roadmap");
+const car = document.getElementById("car");
 
 document.getElementById("googleLoginBtn").onclick = () => {
   signInWithPopup(auth, provider).catch(console.error);
@@ -26,35 +35,55 @@ document.getElementById("emailLoginBtn").onclick = () => {
   signInWithEmailAndPassword(auth, email, password).catch(console.error);
 };
 
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "",
-      createdAt: serverTimestamp()
-    }, { merge: true });
+logoutBtn.onclick = () => {
+  signOut(auth).catch(console.error);
+};
 
+resetBtn.onclick = () => {
+  steps.forEach((_, i) => {
+    localStorage.setItem(`step_${i}`, JSON.stringify(Array(steps[i].tasks.length).fill(false)));
+  });
+  updateRoadmap();
+};
+
+onAuthStateChanged(auth, async (user) => {
+  loadingDiv.style.display = "none"; // Hide loading after auth state known
+
+  if (user) {
     authSection.style.display = "none";
     mainContent.style.display = "block";
+    document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
+
+    await setDoc(
+      doc(db, "users", user.uid),
+      {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "",
+        createdAt: serverTimestamp(),
+      },
+      { merge: true }
+    );
+
     updateRoadmap();
   } else {
     authSection.style.display = "block";
     mainContent.style.display = "none";
+    document.getElementById("auth-status").textContent = "Not logged in";
   }
 });
-
-const roadmap = document.getElementById("roadmap");
-const car = document.getElementById("car");
 
 const steps = [
   {
     title: "Step 1: Learn Python",
     tasks: [
-      { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
+      {
+        text: "Watch Python playlist",
+        link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd",
+      },
       { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
       { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
-    ]
+    ],
   },
   {
     title: "Step 2: Learn Python Libraries",
@@ -62,15 +91,18 @@ const steps = [
       { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
       { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
       { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
-    ]
+    ],
   },
   {
     title: "Step 3: Math for ML",
     tasks: [
       { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
-      { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
+      {
+        text: "Linear Algebra - 3Blue1Brown",
+        link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr",
+      },
       { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
-    ]
+    ],
   },
   {
     title: "Step 4: ML Algorithms",
@@ -78,12 +110,14 @@ const steps = [
       { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
       { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
       { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
-    ]
+    ],
   },
 ];
 
+// Render roadmap and car position
 function updateRoadmap() {
-  roadmap.innerHTML = "";
+  roadmap.innerHTML = ""; // Clear previous
+
   let lastUnlockedStep = 0;
 
   steps.forEach((step, index) => {
@@ -107,7 +141,7 @@ function updateRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        updateRoadmap();
+        updateRoadmap(); // Re-render after change
       });
 
       const link = document.createElement("a");
@@ -120,10 +154,14 @@ function updateRoadmap() {
       stepEl.appendChild(taskEl);
     });
 
-    const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
-      const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
-      return prev.every(Boolean);
-    });
+    const isUnlocked =
+      index === 0 ||
+      steps
+        .slice(0, index)
+        .every((_, i) => {
+          const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
+          return prev.every(Boolean);
+        });
 
     if (!isUnlocked) stepEl.classList.add("locked");
     else lastUnlockedStep = index;
@@ -134,11 +172,14 @@ function updateRoadmap() {
   moveCarToStep(lastUnlockedStep);
 }
 
+// Move car to the right position, facing right
 function moveCarToStep(index) {
   const roadmapWidth = roadmap.offsetWidth;
-  const stepWidth = roadmap.children[0]?.offsetWidth || 200;
+  const stepWidth = roadmap.children[0].offsetWidth;
   const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
   const carPosition = index * (stepWidth + spacing);
   car.style.left = `${carPosition}px`;
-}
 
+  // Flip car to face right (no transform needed as 🚗 emoji faces right by default)
+  car.style.transform = "none";
+}
