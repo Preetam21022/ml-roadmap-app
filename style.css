@@ -13,21 +13,24 @@ h1 {
 
 #road-container {
   position: relative;
-  padding-top: 50px;
-  background: black; /* pitch black road */
+  background: black;
   height: 180px;
+  padding-top: 50px;
   border-radius: 10px;
   margin-top: 20px;
 }
 
+
 #car {
   font-size: 48px;
   position: absolute;
-  top: 50%;
+  top: -32px; /* position above the roadmap */
   left: 0;
-  transform: translateY(-50%);
-  transition: left 1s ease;
+  transform: translateY(0);
+  transition: left 0.5s ease-in-out;
+  z-index: 10;
 }
+
 
 #roadmap {
   display: flex;
@@ -41,6 +44,7 @@ h1 {
   background: #fff;
   border-radius: 10px;
 }
+
 
 .step {
   background: #ffffff;
