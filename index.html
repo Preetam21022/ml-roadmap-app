@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ML Roadmap App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
@@ -24,26 +24,23 @@
   </script>
 </head>
 <body>
+  <h1>ML Roadmap</h1>
+  <p>Complete tasks to unlock each step on your machine learning journey!</p>
+
   <div id="auth-section">
-    <h2>Login to ML Roadmap</h2>
+    <h2>Login</h2>
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
-    <button id="emailLoginBtn" class="btn email">Login with Email</button>
-    <button id="googleLoginBtn" class="btn google">Login with Google</button>
+    <button id="emailLoginBtn">Login with Email</button>
+    <button id="googleLoginBtn">Login with Google</button>
     <p id="auth-status"></p>
   </div>
 
-  <div id="app-content" style="display: none;">
-    <h1>ML Roadmap</h1>
-    <p>Complete tasks to unlock each step on your machine learning journey!</p>
-    <button id="logoutBtn" class="btn logout">Logout</button>
+  <button id="logoutBtn" style="display: none;">Logout</button>
 
-    <div id="road-container">
-      <div id="road">
-        <div id="car">🚗</div>
-        <div id="roadmap"></div>
-      </div>
-    </div>
+  <div id="road-container" style="display: none;">
+    <div id="car">🚗</div>
+    <div id="roadmap"></div>
   </div>
 
   <script type="module" src="main.js"></script>
