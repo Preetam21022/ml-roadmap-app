@@ -69,15 +69,17 @@ h1 {
 
 .task {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
 }
 
+
 .task input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
   cursor: pointer;
+  margin: 0;
 }
+
 
 .task a {
   color: #0288d1;
