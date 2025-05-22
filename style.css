@@ -14,22 +14,24 @@ h1 {
 #road-container {
   position: relative;
   background: black;
-  height: 180px;
-  padding-top: 50px;
+  height: 230px; /* increased from 180px */
+  padding-top: 70px;
   border-radius: 10px;
   margin-top: 20px;
 }
 
 
+
 #car {
   font-size: 48px;
   position: absolute;
-  top: -32px; /* position above the roadmap */
+  bottom: 100%; /* place it just above the roadmap */
   left: 0;
-  transform: translateY(0);
+  transform: translateY(20px);
   transition: left 0.5s ease-in-out;
   z-index: 10;
 }
+
 
 
 #roadmap {
