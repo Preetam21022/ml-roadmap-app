@@ -151,26 +151,30 @@ function renderRoadmap() {
   document.getElementById("progress-indicator").innerText = `Step ${lastUnlockedStep + 1} of ${steps.length}`;
 }
 
-onAuthStateChanged(auth, async (user) => {
-  document.getElementById("loadingMessage").style.display = "none";
-  if (user) {
-    await setDoc(doc(db, "users", user.uid), {
-      uid: user.uid,
-      email: user.email,
-      displayName: user.displayName || "",
-      createdAt: serverTimestamp()
-    }, { merge: true });
+document.addEventListener("DOMContentLoaded", () => {
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("User logged in:", user.email);
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || "",
+        createdAt: serverTimestamp()
+      }, { merge: true });
 
-    authSection.style.display = "none";
-    roadContainer.style.display = "block";
-    logoutBtn.style.display = "inline-block";
-    resetBtn.style.display = "inline-block";
+      authSection.style.display = "none";
+      roadContainer.style.display = "block";
+      logoutBtn.style.display = "inline-block";
+      resetBtn.style.display = "inline-block";
 
-    renderRoadmap();
-  } else {
-    authSection.style.display = "block";
-    roadContainer.style.display = "none";
-    logoutBtn.style.display = "none";
-    resetBtn.style.display = "none";
-  }
+      renderRoadmap();
+    } else {
+      console.log("No user logged in.");
+      authSection.style.display = "block";
+      roadContainer.style.display = "none";
+      logoutBtn.style.display = "none";
+      resetBtn.style.display = "none";
+    }
+  });
 });
+
