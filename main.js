@@ -3,8 +3,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  signOut,
   onAuthStateChanged,
-  signOut
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
 
 import {
@@ -18,21 +18,18 @@ const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
-const emailLoginBtn = document.getElementById("emailLoginBtn");
-const googleLoginBtn = document.getElementById("googleLoginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
 const authSection = document.getElementById("auth-section");
 const appContent = document.getElementById("app-content");
-const authStatus = document.getElementById("auth-status");
+const logoutBtn = document.getElementById("logoutBtn");
 
-emailLoginBtn.onclick = () => {
+document.getElementById("googleLoginBtn").onclick = () => {
+  signInWithPopup(auth, provider).catch(console.error);
+};
+
+document.getElementById("emailLoginBtn").onclick = () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   signInWithEmailAndPassword(auth, email, password).catch(console.error);
-};
-
-googleLoginBtn.onclick = () => {
-  signInWithPopup(auth, provider).catch(console.error);
 };
 
 logoutBtn.onclick = () => {
@@ -50,18 +47,18 @@ onAuthStateChanged(auth, async (user) => {
 
     authSection.style.display = "none";
     appContent.style.display = "block";
-    initRoadmap();
+
+    renderRoadmap(); // show the roadmap
   } else {
+    authSection.style.display = "block";
     appContent.style.display = "none";
-    authSection.style.display = "flex";
   }
 });
 
-function initRoadmap() {
+function renderRoadmap() {
   const roadmap = document.getElementById("roadmap");
   const car = document.getElementById("car");
-
-  roadmap.innerHTML = "";
+  roadmap.innerHTML = ""; // clear previous render
 
   const steps = [
     {
@@ -121,7 +118,7 @@ function initRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        location.reload();
+        renderRoadmap(); // re-render dynamically
       });
 
       const link = document.createElement("a");
@@ -145,14 +142,15 @@ function initRoadmap() {
     roadmap.appendChild(stepEl);
   });
 
-  function moveCarToStep(index) {
-    const roadmapWidth = roadmap.offsetWidth;
-    const stepWidth = roadmap.children[0].offsetWidth;
-    const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
-    const carPosition = index * (stepWidth + spacing);
-    car.style.left = `${carPosition}px`;
-    car.style.transform = 'scaleX(1)';
-  }
-
   moveCarToStep(lastUnlockedStep);
+}
+
+function moveCarToStep(index) {
+  const roadmap = document.getElementById("roadmap");
+  const car = document.getElementById("car");
+  const stepEl = roadmap.children[index];
+  if (!stepEl) return;
+
+  const stepOffset = stepEl.offsetLeft + stepEl.offsetWidth / 2 - car.offsetWidth / 2;
+  car.style.left = `${stepOffset}px`;
 }
