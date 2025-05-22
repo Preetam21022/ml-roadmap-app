@@ -1,42 +1,50 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
 const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
+const emailLoginBtn = document.getElementById("emailLoginBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const resetBtn = document.getElementById("resetProgressBtn");
 const authSection = document.getElementById("auth-section");
 const roadContainer = document.getElementById("road-container");
 const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
-const resetBtn = document.getElementById("resetBtn");
 
-const logoutBtn = document.createElement("button");
-logoutBtn.textContent = "Log Out";
-logoutBtn.style.marginLeft = "10px";
-logoutBtn.style.padding = "8px 12px";
-logoutBtn.style.backgroundColor = "#0288d1";
-logoutBtn.style.color = "white";
-logoutBtn.style.border = "none";
-logoutBtn.style.borderRadius = "5px";
-logoutBtn.style.cursor = "pointer";
+emailLoginBtn.onclick = () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  signInWithEmailAndPassword(auth, email, password).catch(console.error);
+};
 
-// Append logout button next to auth status (or header)
-document.body.insertBefore(logoutBtn, roadContainer);
-logoutBtn.style.display = "none"; // hide initially
+googleLoginBtn.onclick = () => {
+  signInWithPopup(auth, provider).catch(console.error);
+};
 
 logoutBtn.onclick = () => {
   signOut(auth);
 };
 
-document.getElementById("googleLoginBtn").onclick = () => {
-  signInWithPopup(auth, provider).catch(console.error);
-};
-
-document.getElementById("emailLoginBtn").onclick = () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  signInWithEmailAndPassword(auth, email, password).catch(console.error);
+resetBtn.onclick = () => {
+  for (let i = 0; i < 4; i++) {
+    localStorage.removeItem(`step_${i}`);
+  }
+  location.reload();
 };
 
 const steps = [
@@ -45,7 +53,7 @@ const steps = [
     tasks: [
       { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
       { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
-      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
+      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" }
     ]
   },
   {
@@ -53,7 +61,7 @@ const steps = [
     tasks: [
       { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
       { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
-      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
+      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" }
     ]
   },
   {
@@ -61,7 +69,7 @@ const steps = [
     tasks: [
       { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
       { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
-      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
+      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" }
     ]
   },
   {
@@ -69,13 +77,23 @@ const steps = [
     tasks: [
       { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
       { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
-      { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
+      { text: "Kaggle Projects", link: "https://www.kaggle.com/" }
     ]
-  },
+  }
 ];
 
+function moveCarToStep(index) {
+  const roadmapWidth = roadmap.offsetWidth;
+  const stepWidth = roadmap.children[0].offsetWidth;
+  const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
+  const carPosition = index * (stepWidth + spacing);
+  car.style.left = `${carPosition}px`;
+  car.style.transform = "scaleX(1)";
+}
+
 function renderRoadmap() {
-  roadmap.innerHTML = ""; // clear previous
+  roadmap.innerHTML = "";
+  let lastUnlockedStep = 0;
 
   steps.forEach((step, index) => {
     const stepEl = document.createElement("div");
@@ -98,7 +116,7 @@ function renderRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        updateUI();
+        renderRoadmap(); // Re-render everything and update car
       });
 
       const link = document.createElement("a");
@@ -117,49 +135,13 @@ function renderRoadmap() {
     });
 
     if (!isUnlocked) stepEl.classList.add("locked");
+    else lastUnlockedStep = index;
 
     roadmap.appendChild(stepEl);
   });
+
+  moveCarToStep(lastUnlockedStep);
 }
-
-function getLastUnlockedStep() {
-  let lastUnlockedStep = 0;
-  for (let i = 0; i < steps.length; i++) {
-    const taskStates = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
-    if (taskStates.length && taskStates.every(Boolean)) {
-      lastUnlockedStep = i;
-    } else {
-      break;
-    }
-  }
-  return lastUnlockedStep;
-}
-
-function moveCarToStep(index) {
-  const roadmapWidth = roadmap.offsetWidth;
-  const stepWidth = roadmap.children[0]?.offsetWidth || 200;
-  const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
-  const carPosition = index * (stepWidth + spacing);
-  car.style.left = `${carPosition}px`;
-}
-
-// flip the car emoji to face right by CSS transform
-car.style.transition = "left 0.5s ease";
-car.style.transform = "scaleX(1)";
-
-function updateUI() {
-  renderRoadmap();
-  const lastStep = getLastUnlockedStep();
-  moveCarToStep(lastStep);
-}
-
-// Reset all progress
-resetBtn.onclick = () => {
-  steps.forEach((_, index) => {
-    localStorage.removeItem(`step_${index}`);
-  });
-  updateUI();
-};
 
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -170,16 +152,13 @@ onAuthStateChanged(auth, async (user) => {
       createdAt: serverTimestamp()
     }, { merge: true });
 
-    document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
     authSection.style.display = "none";
     roadContainer.style.display = "block";
     logoutBtn.style.display = "inline-block";
     resetBtn.style.display = "inline-block";
 
-    updateUI();
-
+    renderRoadmap();
   } else {
-    document.getElementById("auth-status").textContent = "Not logged in";
     authSection.style.display = "block";
     roadContainer.style.display = "none";
     logoutBtn.style.display = "none";
