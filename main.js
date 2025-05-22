@@ -1,10 +1,11 @@
+// 1. Firebase setup
 import {
   getAuth,
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
 
 import {
@@ -18,10 +19,12 @@ const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
+// 2. DOM elements
 const authSection = document.getElementById("auth-section");
 const appContent = document.getElementById("app-content");
 const logoutBtn = document.getElementById("logoutBtn");
 
+// 3. Button listeners (Login & Logout)
 document.getElementById("googleLoginBtn").onclick = () => {
   signInWithPopup(auth, provider).catch(console.error);
 };
