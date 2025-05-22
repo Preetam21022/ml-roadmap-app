@@ -1,95 +1,83 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #e0f7fa, #fff);
+  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
   padding: 20px;
+  margin: 0;
   color: #333;
 }
 
-h1 {
-  text-align: center;
-  color: #006064;
-}
-
-/* Auth Section Styling */
-#auth-section {
-  max-width: 400px;
-  margin: 0 auto 40px;
-  padding: 20px;
-  background: #e0f7fa;
-  border-radius: 12px;
-  box-shadow: 0 8px 15px rgba(0, 96, 100, 0.2);
+h1, h2 {
   text-align: center;
 }
 
-#auth-section input {
-  width: 90%;
-  padding: 12px 10px;
-  margin: 10px 0;
-  border: 2px solid #4dd0e1;
+.auth-btn {
+  display: block;
+  margin: 10px auto;
+  padding: 10px 20px;
+  border: none;
   border-radius: 8px;
   font-size: 1rem;
-  transition: border-color 0.3s ease;
-}
-
-#auth-section input:focus {
-  border-color: #00796b;
-  outline: none;
-  box-shadow: 0 0 10px #00796baa;
-}
-
-#auth-section button {
-  background: linear-gradient(270deg, #4dd0e1, #00796b);
-  background-size: 400% 400%;
-  border: none;
-  border-radius: 25px;
-  color: white;
-  font-weight: bold;
-  padding: 12px 25px;
-  margin: 10px 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-btn.email {
+  background-color: #00796b;
+  color: white;
+}
+
+.auth-btn.google {
+  background-color: #db4437;
+  color: white;
+}
+
+.auth-btn:hover {
+  opacity: 0.9;
+}
+
+.logout-btn {
+  background-color: #f57c00;
+  color: white;
+  border: none;
+  padding: 10px 15px;
   font-size: 1rem;
-  transition: background-position 0.8s ease, transform 0.2s ease;
+  border-radius: 6px;
+  float: right;
+  margin-bottom: 10px;
+  cursor: pointer;
 }
-
-#auth-section button:hover {
-  background-position: 100% 0;
-  transform: scale(1.05);
-  box-shadow: 0 4px 15px #00796bcc;
-}
-
-#auth-status {
-  margin-top: 15px;
-  font-weight: 600;
-  color: #00796b;
-  min-height: 1.2em;
-}
-
-/* Roadmap & Car */
 
 #road-container {
   position: relative;
   padding-top: 50px;
 }
 
+#road {
+  width: 100%;
+  height: 8px;
+  background-color: black;
+  position: absolute;
+  top: 50px;
+  z-index: 0;
+}
+
 #car {
-  font-size: 32px;
+  font-size: 40px;
   position: absolute;
   top: 10px;
   left: 0;
   transition: left 1s ease;
-  transform: rotateY(180deg);
+  transform: scaleX(1); /* facing right */
 }
 
 #roadmap {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-top: 50px;
+  align-items: flex-start;
+  margin-top: 80px;
   position: relative;
+  z-index: 1;
   padding: 20px;
-  border-top: 6px solid #4dd0e1;
-  border-bottom: 3px dashed #4dd0e1;
-  height: 150px;
 }
 
 .step {
@@ -100,7 +88,6 @@ h1 {
   width: 22%;
   min-width: 200px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
   text-align: center;
   transition: transform 0.2s ease-in-out;
 }
