@@ -1,8 +1,7 @@
 body {
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+  background: linear-gradient(to bottom, #e0f7fa, #fff);
   padding: 20px;
-  margin: 0;
   color: #333;
 }
 
@@ -11,91 +10,57 @@ h1 {
   color: #006064;
 }
 
-#auth-section {
-  max-width: 400px;
-  margin: 100px auto;
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-  text-align: center;
-}
-
-#auth-section input {
-  width: 100%;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.btn {
-  display: inline-block;
-  margin: 8px;
-  padding: 10px 20px;
-  font-size: 1rem;
+#auth-section button {
+  background-color: #00796b;
+  color: white;
   border: none;
   border-radius: 8px;
+  padding: 10px 20px;
+  margin: 5px;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
-.btn.google {
-  background-color: #db4437;
+#auth-section button:hover {
+  background-color: #004d40;
+}
+
+#logoutBtn {
+  background-color: #ff5252;
   color: white;
-}
-
-.btn.google:hover {
-  background-color: #c1351d;
-}
-
-.btn.email {
-  background-color: #1a73e8;
-  color: white;
-}
-
-.btn.email:hover {
-  background-color: #0c56c0;
-}
-
-.btn.logout {
-  background-color: #888;
-  color: white;
-  float: right;
+  padding: 10px 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
   margin: 10px;
+  cursor: pointer;
 }
 
-.btn.logout:hover {
-  background-color: #555;
+#logoutBtn:hover {
+  background-color: #e53935;
 }
 
 #road-container {
   position: relative;
-  margin-top: 50px;
-}
-
-#road {
-  position: relative;
-  background: #000;
-  border-radius: 8px;
-  height: 100px;
-  overflow: hidden;
-  padding: 10px 0;
+  padding-top: 50px;
 }
 
 #car {
   font-size: 32px;
   position: absolute;
-  top: -35px;
+  top: 0;
   left: 0;
-  transition: left 0.8s ease;
+  transition: left 1s ease;
 }
 
 #roadmap {
   display: flex;
-  justify-content: space-around;
-  align-items: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 50px;
+  position: relative;
   padding: 20px;
+  background-color: #000; /* pitch black road */
+  height: 150px;
 }
 
 .step {
@@ -106,7 +71,9 @@ h1 {
   width: 22%;
   min-width: 200px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
   text-align: center;
+  transition: transform 0.2s ease-in-out;
 }
 
 .step.locked {
