@@ -1,58 +1,139 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: black;
-  color: white;
-  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to bottom, #e0f7fa, #fff);
   padding: 20px;
+  color: #333;
 }
 
 h1 {
-  font-size: 2em;
+  text-align: center;
+  color: #006064;
 }
 
 #auth-section {
-  background: #222;
+  background: #ffffff;
   padding: 20px;
   border-radius: 10px;
-  max-width: 300px;
-  margin-bottom: 20px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  margin: 0 auto 30px auto;
+  text-align: center;
+}
+
+#auth-section input[type="email"],
+#auth-section input[type="password"] {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 90%;
+}
+
+#auth-section button {
+  background-color: #4dd0e1;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#auth-section button:hover {
+  background-color: #0097a7;
 }
 
 #road-container {
   position: relative;
-  margin-top: 40px;
+  padding-top: 50px;
+}
+
+#car {
+  font-size: 32px;
+  position: absolute;
+  top: -40px;
+  left: 0;
+  transition: left 1s ease;
+  transform: scaleX(1); /* Face right */
 }
 
 #roadmap {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  align-items: center;
+  margin-top: 50px;
   position: relative;
+  padding: 20px;
+  border-top: 6px solid #000;
+  height: 150px;
+  background-color: #000;
 }
 
 .step {
-  width: 200px;
-  background-color: #333;
+  background: #ffffff;
+  border: 3px dashed #4dd0e1;
+  border-radius: 15px;
   padding: 10px;
-  border-radius: 10px;
+  width: 22%;
+  min-width: 200px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
 }
 
 .step.locked {
-  opacity: 0.5;
+  opacity: 0.4;
   pointer-events: none;
 }
 
-.task {
+.step h2 {
+  font-size: 1rem;
   margin-bottom: 10px;
+  color: #00796b;
 }
 
-.task input {
-  margin-right: 5px;
+.task {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
-#car {
-  position: absolute;
-  top: -40px;
-  transition: left 0.5s ease;
-  font-size: 30px;
+.task input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+}
+
+.task a {
+  color: #0288d1;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.task a:hover {
+  text-decoration: underline;
+}
+
+button#logoutBtn,
+button#resetBtn {
+  background-color: #d32f2f;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  margin: 10px;
+  transition: background-color 0.3s ease;
+}
+
+button#logoutBtn:hover,
+button#resetBtn:hover {
+  background-color: #b71c1c;
+}
+
+#button-container {
+  text-align: center;
+  margin-bottom: 20px;
 }
