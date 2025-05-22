@@ -3,9 +3,11 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
@@ -19,6 +21,7 @@ const provider = new GoogleAuthProvider();
 
 const emailLoginBtn = document.getElementById("emailLoginBtn");
 const googleLoginBtn = document.getElementById("googleLoginBtn");
+const signupBtn = document.getElementById("signupBtn"); // ⬅️ Add this in your HTML
 const logoutBtn = document.getElementById("logoutBtn");
 const resetBtn = document.getElementById("resetProgressBtn");
 const authSection = document.getElementById("auth-section");
@@ -27,13 +30,46 @@ const roadmap = document.getElementById("roadmap");
 const car = document.getElementById("car");
 
 emailLoginBtn.onclick = () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  signInWithEmailAndPassword(auth, email, password).catch(console.error);
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
+  }
+
+  signInWithEmailAndPassword(auth, email, password)
+    .catch(error => {
+      alert("Login failed: " + error.message);
+      console.error("Login error:", error);
+    });
+};
+
+signupBtn.onclick = () => {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (!email || !password) {
+    alert("Please enter both email and password to sign up.");
+    return;
+  }
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(() => {
+      alert("Account created successfully. You are now logged in.");
+    })
+    .catch(error => {
+      alert("Signup failed: " + error.message);
+      console.error("Signup error:", error);
+    });
 };
 
 googleLoginBtn.onclick = () => {
-  signInWithPopup(auth, provider).catch(console.error);
+  signInWithPopup(auth, provider)
+    .catch(error => {
+      alert("Google login failed: " + error.message);
+      console.error("Google login error:", error);
+    });
 };
 
 logoutBtn.onclick = () => {
@@ -97,7 +133,7 @@ function renderRoadmap() {
   roadmap.innerHTML = "";
 
   let lastUnlockedStep = 0;
-  let lastCompletedStep = -1; // -1 means no step completed
+  let lastCompletedStep = -1;
 
   steps.forEach((step, index) => {
     const stepEl = document.createElement("div");
@@ -108,8 +144,6 @@ function renderRoadmap() {
     stepEl.appendChild(header);
 
     const taskStates = JSON.parse(localStorage.getItem(`step_${index}`)) || Array(step.tasks.length).fill(false);
-
-    // Check if this step is fully completed
     const isStepCompleted = taskStates.length > 0 && taskStates.every(Boolean);
     if (isStepCompleted && index > lastCompletedStep) {
       lastCompletedStep = index;
@@ -126,7 +160,7 @@ function renderRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        renderRoadmap(); // Re-render roadmap + move car again
+        renderRoadmap();
       });
 
       const link = document.createElement("a");
@@ -139,7 +173,6 @@ function renderRoadmap() {
       stepEl.appendChild(taskEl);
     });
 
-    // Step is unlocked if it's the first, or all previous steps are completed fully
     const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
       const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
       return prev.every(Boolean);
@@ -151,11 +184,8 @@ function renderRoadmap() {
     roadmap.appendChild(stepEl);
   });
 
-  // If no step completed, move car to step 0, else last completed step
   const carTargetStep = lastCompletedStep === -1 ? 0 : lastCompletedStep;
   moveCarToStep(carTargetStep);
-}
-
 
   document.getElementById("progress-indicator").innerText = `Step ${lastUnlockedStep + 1} of ${steps.length}`;
 }
@@ -186,4 +216,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
