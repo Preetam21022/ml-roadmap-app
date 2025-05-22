@@ -1,3 +1,4 @@
+
 body {
   font-family: 'Segoe UI', sans-serif;
   background: linear-gradient(to bottom, #e0f7fa, #fff);
@@ -10,26 +11,33 @@ h1 {
   color: #006064;
 }
 
-#auth-section, #main-content {
-  text-align: center;
-}
-
-#auth-section input, button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px;
-  font-size: 1rem;
-}
-
-#logoutBtn, #resetBtn {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 1rem;
-  background-color: #4dd0e1;
+#auth-section button {
+  background-color: #00796b;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
+  padding: 10px 20px;
+  margin: 5px;
   cursor: pointer;
+}
+
+#auth-section button:hover {
+  background-color: #004d40;
+}
+
+#logoutBtn {
+  background-color: #ff5252;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+#logoutBtn:hover {
+  background-color: #e53935;
 }
 
 #road-container {
@@ -43,7 +51,6 @@ h1 {
   top: 0;
   left: 0;
   transition: left 1s ease;
-  transform: scaleX(1); /* Car faces right */
 }
 
 #roadmap {
@@ -53,7 +60,7 @@ h1 {
   margin-top: 50px;
   position: relative;
   padding: 20px;
-  border-top: 6px solid #000; /* Pitch black road */
+  background-color: #000; /* pitch black road */
   height: 150px;
 }
 
@@ -65,6 +72,7 @@ h1 {
   width: 22%;
   min-width: 200px;
   box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
   text-align: center;
   transition: transform 0.2s ease-in-out;
 }
@@ -72,6 +80,12 @@ h1 {
 .step.locked {
   opacity: 0.4;
   pointer-events: none;
+}
+
+.step h2 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: #00796b;
 }
 
 .task {
@@ -93,12 +107,4 @@ h1 {
 
 .task a:hover {
   text-decoration: underline;
-}
-
-#loading {
-  display: none;
-  font-size: 1.5rem;
-  color: #006064;
-  text-align: center;
-  margin-top: 50px;
 }
