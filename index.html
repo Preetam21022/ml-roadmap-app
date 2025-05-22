@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>ML Roadmap App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ML Roadmap App</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
@@ -13,10 +13,10 @@
       apiKey: "AIzaSyAAwGXj2Zaftf10DTYHt3T_UfxnZtViL98",
       authDomain: "ml-roadmap-806ef.firebaseapp.com",
       projectId: "ml-roadmap-806ef",
-      storageBucket: "ml-roadmap-806ef.firebasestorage.app",
+      storageBucket: "ml-roadmap-806ef.appspot.com",
       messagingSenderId: "538710745439",
       appId: "1:538710745439:web:f8337d1c01fffc687056ea",
-      measurementId: "G-74YGNVMSWD",
+      measurementId: "G-74YGNVMSWD"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -24,21 +24,24 @@
   </script>
 </head>
 <body>
-  <h1>ML Roadmap</h1>
-  <p>Complete tasks to unlock each step on your machine learning journey!</p>
-
   <div id="auth-section">
-    <h2>Login</h2>
+    <h2>Login to ML Roadmap</h2>
     <input type="email" id="email" placeholder="Email" />
     <input type="password" id="password" placeholder="Password" />
-    <button id="emailLoginBtn">Login with Email</button>
-    <button id="googleLoginBtn">Login with Google</button>
+    <button id="emailLoginBtn" class="auth-btn email">Login with Email</button>
+    <button id="googleLoginBtn" class="auth-btn google">Login with Google</button>
     <p id="auth-status"></p>
   </div>
 
-  <div id="road-container" style="display:none;">
-    <div id="car">🚗</div>
-    <div id="roadmap"></div>
+  <div id="app-content" style="display: none;">
+    <h1>ML Roadmap</h1>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+    <p>Complete tasks to unlock each step on your machine learning journey!</p>
+    <div id="road-container">
+      <div id="road"></div>
+      <div id="car">🚗</div>
+      <div id="roadmap"></div>
+    </div>
   </div>
 
   <script type="module" src="main.js"></script>
