@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ML Roadmap App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-app.js";
@@ -13,7 +13,7 @@
       apiKey: "AIzaSyAAwGXj2Zaftf10DTYHt3T_UfxnZtViL98",
       authDomain: "ml-roadmap-806ef.firebaseapp.com",
       projectId: "ml-roadmap-806ef",
-      storageBucket: "ml-roadmap-806ef.appspot.com",
+      storageBucket: "ml-roadmap-806ef.firebasestorage.app",
       messagingSenderId: "538710745439",
       appId: "1:538710745439:web:f8337d1c01fffc687056ea",
       measurementId: "G-74YGNVMSWD"
@@ -27,7 +27,6 @@
   <h1>ML Roadmap</h1>
   <p>Complete tasks to unlock each step on your machine learning journey!</p>
 
-  <!-- Login Section -->
   <div id="auth-section">
     <h2>Login</h2>
     <input type="email" id="email" placeholder="Email" />
@@ -37,14 +36,15 @@
     <p id="auth-status"></p>
   </div>
 
-  <!-- Roadmap and Car -->
-  <div id="road-container" style="display: none;">
-    <div id="car">🚗</div>
-    <div id="roadmap"></div>
-  </div>
+  <div id="main-content" style="display:none;">
+    <button id="logoutBtn" class="btn">Logout</button>
+    <button id="resetBtn" class="btn">Reset Progress</button>
 
-  <!-- Logout Button -->
-  <button id="logoutBtn" style="display: none;">Logout</button>
+    <div id="road-container">
+      <div id="car">🚗</div>
+      <div id="roadmap"></div>
+    </div>
+  </div>
 
   <script type="module" src="main.js"></script>
 </body>
