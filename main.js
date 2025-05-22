@@ -6,6 +6,7 @@ import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
@@ -17,18 +18,25 @@ const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
-document.getElementById("googleLoginBtn").onclick = () => {
-  signInWithPopup(auth, provider).catch(console.error);
-};
+const emailLoginBtn = document.getElementById("emailLoginBtn");
+const googleLoginBtn = document.getElementById("googleLoginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const authSection = document.getElementById("auth-section");
+const appContent = document.getElementById("app-content");
+const authStatus = document.getElementById("auth-status");
 
-document.getElementById("emailLoginBtn").onclick = () => {
+emailLoginBtn.onclick = () => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   signInWithEmailAndPassword(auth, email, password).catch(console.error);
 };
 
-document.getElementById("logoutBtn").onclick = () => {
-  signOut(auth).catch(console.error);
+googleLoginBtn.onclick = () => {
+  signInWithPopup(auth, provider).catch(console.error);
+};
+
+logoutBtn.onclick = () => {
+  signOut(auth);
 };
 
 onAuthStateChanged(auth, async (user) => {
@@ -40,20 +48,20 @@ onAuthStateChanged(auth, async (user) => {
       createdAt: serverTimestamp()
     }, { merge: true });
 
-    document.getElementById("auth-section").style.display = "none";
-    document.getElementById("app-content").style.display = "block";
-
-    initializeRoadmap();
+    authSection.style.display = "none";
+    appContent.style.display = "block";
+    initRoadmap();
   } else {
-    document.getElementById("auth-section").style.display = "block";
-    document.getElementById("app-content").style.display = "none";
+    appContent.style.display = "none";
+    authSection.style.display = "flex";
   }
 });
 
-function initializeRoadmap() {
+function initRoadmap() {
   const roadmap = document.getElementById("roadmap");
   const car = document.getElementById("car");
-  roadmap.innerHTML = ""; // Clear on re-login
+
+  roadmap.innerHTML = "";
 
   const steps = [
     {
@@ -61,7 +69,7 @@ function initializeRoadmap() {
       tasks: [
         { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
         { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
-        { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" }
+        { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
       ]
     },
     {
@@ -69,7 +77,7 @@ function initializeRoadmap() {
       tasks: [
         { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
         { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
-        { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" }
+        { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
       ]
     },
     {
@@ -77,7 +85,7 @@ function initializeRoadmap() {
       tasks: [
         { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
         { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
-        { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" }
+        { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
       ]
     },
     {
@@ -85,9 +93,9 @@ function initializeRoadmap() {
       tasks: [
         { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
         { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
-        { text: "Kaggle Projects", link: "https://www.kaggle.com/" }
+        { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
       ]
-    }
+    },
   ];
 
   let lastUnlockedStep = 0;
@@ -113,7 +121,7 @@ function initializeRoadmap() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        initializeRoadmap();
+        location.reload();
       });
 
       const link = document.createElement("a");
@@ -137,13 +145,14 @@ function initializeRoadmap() {
     roadmap.appendChild(stepEl);
   });
 
-  // Move car to unlocked step
-  const stepEl = roadmap.children[0];
-  if (stepEl) {
+  function moveCarToStep(index) {
     const roadmapWidth = roadmap.offsetWidth;
-    const stepWidth = stepEl.offsetWidth;
+    const stepWidth = roadmap.children[0].offsetWidth;
     const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
-    const carPosition = lastUnlockedStep * (stepWidth + spacing);
+    const carPosition = index * (stepWidth + spacing);
     car.style.left = `${carPosition}px`;
+    car.style.transform = 'scaleX(1)';
   }
+
+  moveCarToStep(lastUnlockedStep);
 }
