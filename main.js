@@ -4,23 +4,18 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-auth.js";
-
 import {
   getFirestore,
   doc,
   setDoc,
-  serverTimestamp,
+  serverTimestamp
 } from "https://www.gstatic.com/firebasejs/11.8.0/firebase-firestore.js";
 
 const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
-
-const authSection = document.getElementById("auth-section");
-const roadContainer = document.getElementById("road-container");
-const roadmap = document.getElementById("roadmap");
-const car = document.getElementById("car");
 
 document.getElementById("googleLoginBtn").onclick = () => {
   signInWithPopup(auth, provider).catch(console.error);
@@ -32,81 +27,69 @@ document.getElementById("emailLoginBtn").onclick = () => {
   signInWithEmailAndPassword(auth, email, password).catch(console.error);
 };
 
+document.getElementById("logoutBtn").onclick = () => {
+  signOut(auth).catch(console.error);
+};
+
 onAuthStateChanged(auth, async (user) => {
   if (user) {
-    await setDoc(
-      doc(db, "users", user.uid),
-      {
-        uid: user.uid,
-        email: user.email,
-        displayName: user.displayName || "",
-        createdAt: serverTimestamp(),
-      },
-      { merge: true }
-    );
+    await setDoc(doc(db, "users", user.uid), {
+      uid: user.uid,
+      email: user.email,
+      displayName: user.displayName || "",
+      createdAt: serverTimestamp()
+    }, { merge: true });
 
-    document.getElementById("auth-status").textContent = `Logged in as ${user.email}`;
-    authSection.style.display = "none";
-    roadContainer.style.display = "block";
-    updateRoadmapUI();
+    document.getElementById("auth-section").style.display = "none";
+    document.getElementById("app-content").style.display = "block";
+
+    initializeRoadmap();
   } else {
-    document.getElementById("auth-status").textContent = "Not logged in";
-    authSection.style.display = "block";
-    roadContainer.style.display = "none";
+    document.getElementById("auth-section").style.display = "block";
+    document.getElementById("app-content").style.display = "none";
   }
 });
 
-const steps = [
-  {
-    title: "Step 1: Learn Python",
-    tasks: [
-      {
-        text: "Watch Python playlist",
-        link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd",
-      },
-      { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
-      { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" },
-    ],
-  },
-  {
-    title: "Step 2: Learn Python Libraries",
-    tasks: [
-      { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
-      { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
-      { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" },
-    ],
-  },
-  {
-    title: "Step 3: Math for ML",
-    tasks: [
-      { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
-      {
-        text: "Linear Algebra - 3Blue1Brown",
-        link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr",
-      },
-      { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" },
-    ],
-  },
-  {
-    title: "Step 4: ML Algorithms",
-    tasks: [
-      { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
-      { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
-      { text: "Kaggle Projects", link: "https://www.kaggle.com/" },
-    ],
-  },
-];
+function initializeRoadmap() {
+  const roadmap = document.getElementById("roadmap");
+  const car = document.getElementById("car");
+  roadmap.innerHTML = ""; // Clear on re-login
 
-function moveCarToStep(index) {
-  const roadmapWidth = roadmap.offsetWidth;
-  const stepWidth = roadmap.children[0]?.offsetWidth || 0;
-  const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
-  const carPosition = index * (stepWidth + spacing);
-  car.style.left = `${carPosition}px`;
-}
+  const steps = [
+    {
+      title: "Step 1: Learn Python",
+      tasks: [
+        { text: "Watch Python playlist", link: "https://www.youtube.com/playlist?list=PLu0W_9lII9aiL0kysYlfSOUgY5rNlOhUd" },
+        { text: "Read W3Schools Python Tutorial", link: "https://www.w3schools.com/python/" },
+        { text: "Try Jupyter Notebooks", link: "https://jupyter.org/" }
+      ]
+    },
+    {
+      title: "Step 2: Learn Python Libraries",
+      tasks: [
+        { text: "Pandas Documentation", link: "https://pandas.pydata.org/docs/user_guide/index.html" },
+        { text: "Numpy Guide", link: "https://numpy.org/doc/stable/user/quickstart.html" },
+        { text: "Matplotlib Tutorial", link: "https://matplotlib.org/stable/tutorials/index.html" }
+      ]
+    },
+    {
+      title: "Step 3: Math for ML",
+      tasks: [
+        { text: "Khan Academy Statistics", link: "https://www.khanacademy.org/math/statistics-probability" },
+        { text: "Linear Algebra - 3Blue1Brown", link: "https://www.youtube.com/playlist?list=PLZHQObOWTQDMsr9K-rj53DwVRMYO3t5Yr" },
+        { text: "Calculus - Khan Academy", link: "https://www.khanacademy.org/math/differential-calculus" }
+      ]
+    },
+    {
+      title: "Step 4: ML Algorithms",
+      tasks: [
+        { text: "Statistical Learning Course", link: "https://www.statlearning.com/" },
+        { text: "Scikit-learn Tutorial", link: "https://scikit-learn.org/stable/tutorial/index.html" },
+        { text: "Kaggle Projects", link: "https://www.kaggle.com/" }
+      ]
+    }
+  ];
 
-function updateRoadmapUI() {
-  roadmap.innerHTML = "";
   let lastUnlockedStep = 0;
 
   steps.forEach((step, index) => {
@@ -130,7 +113,7 @@ function updateRoadmapUI() {
       checkbox.addEventListener("change", () => {
         taskStates[taskIndex] = checkbox.checked;
         localStorage.setItem(`step_${index}`, JSON.stringify(taskStates));
-        updateRoadmapUI();
+        initializeRoadmap();
       });
 
       const link = document.createElement("a");
@@ -143,14 +126,10 @@ function updateRoadmapUI() {
       stepEl.appendChild(taskEl);
     });
 
-    const isUnlocked =
-      index === 0 ||
-      steps
-        .slice(0, index)
-        .every((_, i) => {
-          const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
-          return prev.every(Boolean);
-        });
+    const isUnlocked = index === 0 || steps.slice(0, index).every((_, i) => {
+      const prev = JSON.parse(localStorage.getItem(`step_${i}`)) || [];
+      return prev.every(Boolean);
+    });
 
     if (!isUnlocked) stepEl.classList.add("locked");
     else lastUnlockedStep = index;
@@ -158,5 +137,13 @@ function updateRoadmapUI() {
     roadmap.appendChild(stepEl);
   });
 
-  moveCarToStep(lastUnlockedStep);
+  // Move car to unlocked step
+  const stepEl = roadmap.children[0];
+  if (stepEl) {
+    const roadmapWidth = roadmap.offsetWidth;
+    const stepWidth = stepEl.offsetWidth;
+    const spacing = (roadmapWidth - stepWidth * steps.length) / (steps.length - 1);
+    const carPosition = lastUnlockedStep * (stepWidth + spacing);
+    car.style.left = `${carPosition}px`;
+  }
 }
