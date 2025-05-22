@@ -105,3 +105,17 @@ button {
 button:hover {
   background-color: #0277bd;
 }
+.step.completed {
+  border: 3px solid #00c853;
+  background: #e8f5e9;
+}
+
+#roadmap {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.step {
+  flex: 0 0 auto;
+}
+
